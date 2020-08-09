@@ -1,5 +1,5 @@
 import request from '../utils/request';
-import { getHospitalInfoByCondition,getlowerCommunityInfoByOrgId,getDepByOrgId,getDoctorListByDepId,getScheduleDateurl,getScheduleDateTimesNew,getScheduleNO,createBusinessInfo_selft } from '../utils/api';
+import { getHospitalInfoByCondition,getlowerCommunityInfoByOrgId,getDepByOrgId,getDoctorListByDepId,getScheduleDateurl,getScheduleDateTimesNew,getScheduleNO,createBusinessInfo_selft,getVerificationimageCode,getVerificationCode,dgRegisterToRealNameToLogin } from '../utils/api';
 
 export const getHospitalList = query => {
     return request({
@@ -69,6 +69,32 @@ export const submitInfo = query => {
         url: createBusinessInfo_selft,
         method: 'get',
         params: query,
+        dataHandleFlag: true
+    });
+};
+
+export const getVerificationImageCode = data => {
+    return request({
+        url: getVerificationimageCode,
+        method: 'post',
+        data: data
+    });
+};
+
+export const getVerCode = data => {
+    return request({
+        url: getVerificationCode,
+        method: 'post',
+        data: data,
+        dataHandleFlag: true
+    });
+};
+
+export const login = data => {
+    return request({
+        url: dgRegisterToRealNameToLogin,
+        method: 'post',
+        data: data,
         dataHandleFlag: true
     });
 };

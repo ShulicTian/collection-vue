@@ -14,7 +14,7 @@ service.interceptors.request.use(
     config => {
         config.headers.authToken = store.state.system.token;
         if (config.dataHandleFlag) {
-            config.headers.token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTY4NzA5NDEzMDQsInBheWxvYWQiOiJ7XCJvcGVuSWRcIjpcIm9rMDNXd0txZ1lyU0ZWZTAwQnBxdHBJeVZjUlVcIixcInVzZXJJZFwiOjEwNzU4ODcyNTc3NzA5NjUyNDksXCJsb2dpblR5cGVcIjpcIldlQ2hhdFwiLFwibG9naW5EYXRlXCI6MTU5NjI2NjE0MTMwM30ifQ.Xaw_3g_dLlDXWeXO8XHKtPZCrqGelB6IBV6sJrWrNY8';
+            config.headers.token = store.state.task.token;
             store.commit('system/setDataHandleFlag', config.dataHandleFlag);
         } else {
             store.commit('system/setDataHandleFlag', false);
@@ -29,6 +29,7 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     response => {
+        console.log(response)
         if (response.status === 200) {
             if (store.state.system.dataHandleFlag) {
                 return DataDecryption(response.data);
@@ -42,6 +43,9 @@ service.interceptors.response.use(
         }
     },
     error => {
+        if (error.response.status === 401) {
+            router.push('/login');
+        }
         console.log(error);
         return Promise.reject();
     }

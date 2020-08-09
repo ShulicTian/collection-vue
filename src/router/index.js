@@ -32,6 +32,12 @@ export default new Router({
                     meta: { title: '数据解码', permission: true }
                 },
                 {
+                    // 权限页面
+                    path: '/config',
+                    component: () => import(/* webpackChunkName: "permission" */ '../components/page/config.vue'),
+                    meta: { title: '基础配置', permission: true }
+                },
+                {
                     path: '/404',
                     component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
                     meta: { title: '404' }

@@ -70,6 +70,11 @@ export default {
                     icon: 'el-icon-lx-cascades',
                     index: 'dataHandle',
                     title: '数据解码'
+                },
+                {
+                    icon: 'el-icon-lx-cascades',
+                    index: 'config',
+                    title: '基础配置'
                 }
             ]
         };

@@ -181,6 +181,7 @@
                     });
                 };
                 let func = function() {
+                    console.log('sync')
                     for (let i = 0; i < list.length; i++) {
                         try {
                             if (list[i].taskType == 0) {

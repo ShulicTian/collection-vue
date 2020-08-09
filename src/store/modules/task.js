@@ -3,7 +3,8 @@ import { addTask, getTaskList, removeTask } from '../../api/task';
 export default {
     namespaced: true,
     state: {
-        taskList: []
+        taskList: [],
+        token: localStorage.getItem('token') || ''
     },
     mutations: {
         setTaskList(state, data) {
@@ -24,6 +25,10 @@ export default {
                 }
                 return true;
             });
+        },
+        setToken(state, data) {
+            state.token = data;
+            localStorage.setItem('token', data);
         }
     },
     actions: {
@@ -51,6 +56,9 @@ export default {
     getters: {
         taskList(state) {
             return state.taskList;
+        },
+        token(state){
+            return state.token
         }
     }
 };

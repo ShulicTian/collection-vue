@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from '../store';
 import { DataDecryption } from '../utils/utils';
-import router from 'vue-router';
+import router from '../router';
 
 const service = axios.create({
     // process.env.NODE_ENV === 'development' 来判断是否开发环境
@@ -29,13 +29,12 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     response => {
-        console.log(response)
         if (response.status === 200) {
             if (store.state.system.dataHandleFlag) {
                 return DataDecryption(response.data);
             }
             return response.data;
-        } else if (response.status === 401) {
+        } else if (response.status == 401) {
             store.dispatch('system/saveUser', null);
             router.push('/login');
         } else {
@@ -43,10 +42,9 @@ service.interceptors.response.use(
         }
     },
     error => {
-        if (error.response.status === 401) {
+        if (error.response.status == 401) {
             router.push('/login');
         }
-        console.log(error);
         return Promise.reject();
     }
 );

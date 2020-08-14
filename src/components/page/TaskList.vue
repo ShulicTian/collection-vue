@@ -59,8 +59,15 @@
 </template>
 <script>
     import { mapGetters } from 'vuex';
-    import { getScheduleDate, getScheduleDateTimes, goSubmitSchedule, submitInfo } from '../../api/index';
+    import {
+        finalRequest,
+        getScheduleDate,
+        getScheduleDateTimes,
+        goSubmitSchedule,
+        setScheduler
+    } from '../../api/index';
     import { DataEncryption } from '../../utils/utils';
+    import { formateTime } from '../../utils/DateUtil';
 
     export default {
         name: 'TaskList',
@@ -68,14 +75,17 @@
             return {
                 taskList: [],
                 typeList: ['时间任务', '日期任务', '医生任务'],
-                task: '',
+                task: [],
                 flag: false
             };
         },
         computed: {
             ...mapGetters({
                 getTaskList: 'task/taskList',
-                getUser: 'system/getUser'
+                getTask: 'task/getTask',
+                getUser: 'system/getUser',
+                getUserId: 'task/getUserId',
+                getMemberId: 'task/getMemberId'
             })
         },
         methods: {
@@ -89,22 +99,27 @@
                 this.$store.dispatch('task/requestTaskList', this.getUser.id);
             },
             startTask() {
+                let mid = this.getMemberId;
                 let list = this.getTaskList;
                 let user = this.getUser;
+                let _this = this;
                 let typeTwo = function(obj) {
-                    var xykj = DataEncryption([
+                    let params = [
                         'producerType=' + '1',
                         'producerId=' + obj.doctorId,
-                        'depId=' + obj.deptId,
+                        'depId=' + obj.depId,
                         'teamId=' + '',
                         'orgId=' + obj.comminityId
-                    ]);
+                    ];
+                    var xykj = DataEncryption(params);
                     getScheduleDate({ xykj: xykj }).then(res => {
                         if (res.content && res.content.length > 0) {
                             for (let i = 0; i < res.content.length; i++) {
                                 obj.workDate = res.content[i].workDate;
+                                typeOne(obj);
                             }
-                            typeOne(obj);
+                        } else {
+                            typeTwo(obj);
                         }
                     });
                 };
@@ -112,59 +127,126 @@
                     var xykj = DataEncryption([
                         'producerType=' + '1',
                         'producerId=' + obj.doctorId,
-                        'depId=' + obj.deptId,
+                        'depId=' + obj.depId,
                         'teamId=' + '',
                         'orgId=' + obj.comminityId,
                         'workDate=' + obj.workDate
                     ]);
                     getScheduleDateTimes({ xykj: xykj }).then(res => {
                         if (res.content && res.content[obj.comminityId].length > 0) {
+                            let func = function() {
+                                typeZero(obj);
+                            };
+                            let taskList = [];
                             for (let i = 0; i < res.content[obj.comminityId].length; i++) {
-                                if (res.content[obj.comminityId][i].residueNum > 0) {
-                                    obj.feeId = res.content[obj.comminityId][i].feeId;
-                                    obj.teamId = res.content[obj.comminityId][i].teamId;
-                                    obj.startTime = res.content[obj.comminityId][i].startTime;
-                                    obj.endTime = res.content[obj.comminityId][i].endTime;
-                                    obj.timeUnit = res.content[obj.comminityId][i].timeUnit;
-                                    typeZero(obj);
+                                console.log(res.content[obj.comminityId][i].residueNum);
+                                // if (res.content[obj.comminityId][i].residueNum > 0) {
+                                obj.feeId = res.content[obj.comminityId][i].feeId;
+                                obj.teamId = res.content[obj.comminityId][i].teamId;
+                                obj.startTime = res.content[obj.comminityId][i].startTime;
+                                obj.endTime = res.content[obj.comminityId][i].endTime;
+                                obj.timeUnit = res.content[obj.comminityId][i].timeUnit;
+                                let task0 = setInterval(func, 1000);
+                                if (_this.task && _this.task.length > 0) {
+                                    _this.task.push(task0);
+                                } else {
+                                    taskList.push(task0);
                                 }
+                                // }
                             }
+                            if (taskList.length > 0) {
+                                _this.task = taskList;
+                            }
+                            _this.$store.commit('task/setTask', _this.task);
+                        } else {
+                            typeOne(obj);
                         }
                     });
                 };
                 let typeZero = function(obj) {
-                    var xykj = DataEncryption([
-                        'memberId=' + user.memberId,
+                    let params = [
+                        'memberId=' + mid,
                         'producerType=' + '1',
                         'producerId=' + obj.doctorId,
-                        'depId=' + obj.deptId,
+                        'depId=' + obj.depId,
                         'teamId=' + '',
                         'orgId=' + obj.comminityId,
                         'workDate=' + obj.workDate,
-                        'startTime=' + obj.startTime,
-                        'endTime=' + obj.endTime,
+                        'startTime=' + formateTime(obj.workDate + ' ' + obj.startTime),
+                        'endTime=' + formateTime(obj.workDate + ' ' + obj.endTime),
                         'providerId=' + '0'
-                    ]);
+                    ];
+                    var xykj = DataEncryption(params);
                     goSubmitSchedule({ xykj: xykj }).then(res => {
                         if (res.code == 1) {
-                            obj.scheduleNo == res.content;
+                            obj.scheduleNo = res.content;
+                            console.log('submit');
                             submit(obj);
                         }
                     });
                 };
 
+                // let submit = function(obj) {
+                //     var xykj = DataEncryption([
+                //         'scheduleDoctorId=' + '0',
+                //         'serviceProvideDoctorId=' + obj.doctorId,
+                //         'feeItemId=' + obj.feeId,
+                //         'memberUserId=' + mid,
+                //         'familyMemberId=' + mid,
+                //         'scheduleDate=' + obj.workDate,
+                //         'scheduleStartTime=' + obj.startTime,
+                //         'scheduleEndTime=' + obj.endTime,
+                //         'provideOrgId=' + obj.comminityId,
+                //         'departmentId=' + obj.depId,
+                //         'teamId=' + obj.teamId,
+                //         'schedulingDesc=' + '',
+                //         'msoContent=' + '',
+                //         'mobile=' + user.mobile,
+                //         'memberUserName=' + user.name,
+                //         'msoMemberName=' + user.name,
+                //         'filePathNames=' + '',
+                //         'referredId=' + '0',
+                //         'scheduleNo=' + obj.scheduleNo,
+                //         'type=' + '1'
+                //     ]);
+                //     submitInfo({ xykj: xykj }).then(res => {
+                //         console.log(res);
+                //     });
+                // };
                 let submit = function(obj) {
+                    var xykj = DataEncryption([
+                        'producerType=' + '1',
+                        'producerId=' + obj.doctorId,
+                        'depId=' + obj.depId,
+                        'teamId=' + '',
+                        'orgId=' + obj.comminityId,
+                        'workDate=' + obj.workDate,
+                        'startTime=' + formateTime(obj.workDate + ' ' + obj.startTime),
+                        'endTime=' + formateTime(obj.workDate + ' ' + obj.endTime),
+                        'providerId=' + '0',
+                        'memberId=' + mid,
+                        'subscribeNo=' + obj.scheduleNo,
+                        'diagnosisNum='
+                    ]);
+                    setScheduler({ xykj: xykj }).then(res => {
+                        if (res.code == 1) {
+                            finalDo(obj);
+                        }
+                    });
+                };
+
+                let finalDo = function(obj) {
                     var xykj = DataEncryption([
                         'scheduleDoctorId=' + '0',
                         'serviceProvideDoctorId=' + obj.doctorId,
                         'feeItemId=' + obj.feeId,
-                        'memberUserId=' + user.memberId,
-                        'familyMemberId=' + user.memberId,
+                        'memberUserId=' + mid,
+                        'familyMemberId=' + mid,
                         'scheduleDate=' + obj.workDate,
-                        'scheduleStartTime=' + obj.startTime,
-                        'scheduleEndTime=' + obj.endTime,
+                        'scheduleStartTime=' + formateTime(obj.workDate + ' ' + obj.startTime),
+                        'scheduleEndTime=' + formateTime(obj.workDate + ' ' + obj.endTime),
                         'provideOrgId=' + obj.comminityId,
-                        'departmentId=' + obj.deptId,
+                        'departmentId=' + obj.depId,
                         'teamId=' + obj.teamId,
                         'schedulingDesc=' + '',
                         'msoContent=' + '',
@@ -176,16 +258,27 @@
                         'scheduleNo=' + obj.scheduleNo,
                         'type=' + '1'
                     ]);
-                    submitInfo({ xykj: xykj }).then(res => {
-                        console.log(res);
+                    finalRequest({ xykj: xykj }).then(res => {
+                        if (res.code == 1) {
+                            _this.closeTask();
+                            alert('预约成功');
+                        }
                     });
                 };
-                let func = function() {
-                    console.log('sync')
+
+                if (!this.flag) {
                     for (let i = 0; i < list.length; i++) {
                         try {
+                            let func;
                             if (list[i].taskType == 0) {
-                                typeZero(list[i]);
+                                func = function() {
+                                    typeZero(list[i]);
+                                };
+                                let taskList = [];
+                                let task0 = setInterval(func, 1000);
+                                taskList.push(task0);
+                                this.task = taskList;
+                                this.$store.commit('task/setTask', this.task);
                             } else if (list[i].taskType == 1) {
                                 typeOne(list[i]);
                             } else if (list[i].taskType == 2) {
@@ -196,21 +289,25 @@
                             console.log(e);
                         }
                     }
-                };
-                if (!this.flag) {
-                    this.task = setInterval(func, 1000);
                 }
                 this.flag = true;
             },
             closeTask() {
                 if (this.flag) {
                     this.flag = false;
-                    clearInterval(this.task);
+                    this.$store.commit('task/setTask', null);
+                    for (let i = 0; i < this.task.length; i++) {
+                        clearInterval(this.task[i]);
+                    }
                 }
             }
         },
         created() {
             this.requestTaskList();
+            this.task = this.getTask;
+            if (this.task) {
+                this.flag = true;
+            }
         }
     };
 </script>

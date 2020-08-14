@@ -38,6 +38,12 @@ export default new Router({
                     meta: { title: '基础配置', permission: true }
                 },
                 {
+                    // 接口测试
+                    path: '/interfaceTest',
+                    component: () => import(/* webpackChunkName: "permission" */ '../components/page/InterfaceTest.vue'),
+                    meta: { title: '接口测试', permission: true }
+                },
+                {
                     path: '/404',
                     component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
                     meta: { title: '404' }

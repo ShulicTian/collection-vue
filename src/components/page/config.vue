@@ -8,7 +8,7 @@
                     </el-input>
                 </el-form-item>
                 <div>
-                    <el-button type="primary" @click="submitForm()" v-if="flag">保存</el-button>
+                    <el-button type="primary" @click="submitForm()" v-if="!getToken">保存</el-button>
                     <el-button type="primary" disabled v-else>已保存</el-button>
                 </div>
             </el-form>
@@ -36,7 +36,8 @@
                     </el-input>
                 </el-form-item>
                 <div>
-                    <el-button type="primary">登录</el-button>
+                    <el-button type="primary" @click="login" v-if="!getMemberId">登录</el-button>
+                    <el-button type="primary" disabled v-else>已登录</el-button>
                 </div>
             </el-form>
         </el-tab-pane>
@@ -46,7 +47,7 @@
 <script>
     import { mapGetters } from 'vuex';
     import { DataEncryption } from '../../utils/utils';
-    import { getVerCode, getVerificationImageCode, login } from '../../api/index';
+    import { getVerCode, getVerificationImageCode, login, loginPage } from '../../api/index';
 
     export default {
         data: function() {
@@ -60,18 +61,18 @@
                     idcard: '',
                     mobile: '',
                     code: ''
-                },
-                flag: true
+                }
             };
         },
         computed: {
             ...mapGetters({
-                getToken: 'task/token'
+                getToken: 'task/token',
+                getMemberId: 'task/getMemberId'
             })
         },
         methods: {
             submitForm() {
-                this.$store.commit('task/setToekn', this.values.token);
+                this.$store.commit('task/setToken', this.values.token);
             },
             count() {
                 let _this = this;
@@ -99,10 +100,9 @@
                             'smsType=1',
                             'imageCode=' + imgCode
                         ]);
-                        let formdata = new
                         getVerCode({ xykj: xykj2 }).then(res => {
                             if (res && res.code == 1) {
-                                this.values.code == res.content;
+                                this.values.code = res.content;
                             }
                         });
                     }
@@ -132,16 +132,20 @@
                 ]);
                 login({ xykj: xykj }).then(res => {
                     if (res && res.code == 1) {
-                        console.log(res)
-                        // this.$store.commit('task/setToken', res.sessionId);
+                        this.$store.commit('task/setLoginInfo', {
+                            memberId: res.contentMap.memberId,
+                            userId: res.userId
+                        });
                     }
+                });
+            },
+            async findCookie() {
+                await loginPage().then(res => {
                 });
             }
         },
         created() {
-            if (this.getToken) {
-                this.flag = false;
-            }
+            this.findCookie();
         }
     };
 </script>

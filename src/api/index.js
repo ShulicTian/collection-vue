@@ -1,5 +1,5 @@
 import request from '../utils/request';
-import { getHospitalInfoByCondition,getlowerCommunityInfoByOrgId,getDepByOrgId,getDoctorListByDepId,getScheduleDateurl,getScheduleDateTimesNew,getScheduleNO,createBusinessInfo_selft,getVerificationimageCode,getVerificationCode,dgRegisterToRealNameToLogin } from '../utils/api';
+import { getHospitalInfoByCondition,getlowerCommunityInfoByOrgId,getDepByOrgId,getDoctorListByDepId,getScheduleDateurl,getScheduleDateTimesNew,getScheduleNO,createBusinessInfo_selft,getVerificationimageCode,getVerificationCode,dgRegisterToRealNameToLogin,setSchedulerInfo,createBusinessInfoNotPayment } from '../utils/api';
 
 export const getHospitalList = query => {
     return request({
@@ -73,28 +73,55 @@ export const submitInfo = query => {
     });
 };
 
-export const getVerificationImageCode = data => {
+export const setScheduler = query => {
+    return request({
+        url: setSchedulerInfo,
+        method: 'get',
+        params: query,
+        dataHandleFlag: true
+    });
+};
+
+export const finalRequest = query => {
+    return request({
+        url: createBusinessInfoNotPayment,
+        method: 'get',
+        params: query,
+        dataHandleFlag: true
+    });
+};
+
+export const getVerificationImageCode = query => {
     return request({
         url: getVerificationimageCode,
-        method: 'post',
-        data: data
+        method: 'get',
+        params: query,
+        dataHandleFlag: true
     });
 };
 
-export const getVerCode = data => {
+export const getVerCode = query => {
     return request({
         url: getVerificationCode,
-        method: 'post',
-        data: data,
+        method: 'get',
+        params: query,
         dataHandleFlag: true
     });
 };
 
-export const login = data => {
+export const login = query => {
     return request({
         url: dgRegisterToRealNameToLogin,
-        method: 'post',
-        data: data,
+        method: 'get',
+        params: query,
         dataHandleFlag: true
+    });
+};
+
+export const loginPage = query => {
+    return request({
+        url: '/hoffice/memberapp/login.html?orgId=&wxopenid=&vercode=1&source=&t=1596254650234',
+        method: 'get',
+        params: query
     });
 };

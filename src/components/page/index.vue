@@ -35,7 +35,8 @@
                 <div v-else-if="item.name == 'doctor'">
                     <el-card class="box-card" v-for="(obj,index) in doctorList">
                         <div>
-                            <div class="cardArea" style="float: left" @click="obj.isWork == 1?requestScheduleDate(obj):notWork()">
+                            <div class="cardArea" style="float: left"
+                                 @click="requestScheduleDate(obj)">
                                 <div style="margin-bottom: 10px;">姓名：
                                     <el-tag size="medium" style="">{{obj.name}}</el-tag>
                                 </div>
@@ -43,7 +44,7 @@
                                     <el-tag type="success" size="medium">{{obj.section}}</el-tag>
                                 </div>
                             </div>
-                            <div style="float: right;" v-if="obj.isWork != 1">
+                            <div style="float: right;">
                                 <el-button type="primary" size="mini" @click.stop="addTask(obj,'2')"
                                            v-if="isExistTask('2',obj.id)">添加医生级任务
                                 </el-button>
@@ -61,27 +62,27 @@
                                  @change="changeCollapse">
                         <el-collapse-item :title="'日期：'+obj.workDate" :name="index"
                                           v-for="(obj,index) in scheduleDate">
-                            <div v-for="obj2 in dataTimesList[finalParams.comminityId]"
-                                 style="margin: 10px;padding:10px;border: 1px solid #d8d8d8;border-radius: 5px;">
-                                <div style="float: left;">
-                                    {{obj2.timeUnit}}（剩余{{obj2.residueNum}}）
-                                </div>
-                                <div style="float: right;padding-right: 10px;">
-                                    <el-button type="primary" size="mini" @click.stop="addTask(obj2,'0')"
-                                               v-if="isExistTask('0',obj2.timeUnit)">添加到抢号任务
-                                    </el-button>
-                                    <el-button type="primary" size="mini" v-else disabled>已添加</el-button>
-                                </div>
-                                <div style="clear: both;"></div>
-                            </div>
-                            <div v-if="dataTimesList[finalParams.comminityId].length == 0"
-                                 style="margin: 10px;padding:10px;border: 1px solid #d8d8d8;border-radius: 5px;">
+                            <div
+                                    style="margin: 10px;padding:10px;border: 1px solid #d8d8d8;border-radius: 5px;">
                                 <div style="float: left;">
                                     暂无时间
                                 </div>
                                 <div style="float: right;padding-right: 10px;">
                                     <el-button type="primary" size="mini" @click.stop="addTask(obj,'1')"
                                                v-if="isExistTask('1',obj.workDate)">添加日期任务
+                                    </el-button>
+                                    <el-button type="primary" size="mini" v-else disabled>已添加</el-button>
+                                </div>
+                                <div style="clear: both;"></div>
+                            </div>
+                            <div v-for="obj2 in dataTimesList[finalParams.comminityId]"
+                                 style="margin: 10px;padding:10px;border: 1px solid #d8d8d8;border-radius: 5px;">
+                                <div style="float: left;">
+                                    {{obj2.timeUnit}}（剩余{{obj2.timeNum-obj2.residueNum}}）
+                                </div>
+                                <div style="float: right;padding-right: 10px;">
+                                    <el-button type="primary" size="mini" @click.stop="addTask(obj2,'0')"
+                                               v-if="isExistTask('0',obj2.timeUnit)">添加到抢号任务
                                     </el-button>
                                     <el-button type="primary" size="mini" v-else disabled>已添加</el-button>
                                 </div>
@@ -317,11 +318,11 @@
                 } else if (type == '0') {
                     this.finalParams.feeId = obj.feeId;
                     this.finalParams.teamId = obj.teamId;
-                    this.finalParams.startTime = obj.startTime;
-                    this.finalParams.endTime = obj.endTime;
+                    this.finalParams.startTime = obj.startTime + ':00';
+                    this.finalParams.endTime = obj.endTime + ':00';
                     this.finalParams.timeUnit = obj.timeUnit;
-                    this.finalParams.taskType = type;
                 }
+                this.finalParams.taskType = type;
                 this.$store.dispatch('task/addTask', this.finalParams);
             },
             goSubmit(obj) {

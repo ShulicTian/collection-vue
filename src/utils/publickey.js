@@ -1,0 +1,6 @@
+export const publicKey = '-----BEGIN PUBLIC KEY-----\
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDoUjtos8lXDiBGwpMU/2GeKBbJ\
+mKIpa8YpyuuvEvBTc2XCYG/Tm3QWfwj77NdlIATjt2lOKoCJaK7fK/T+AVzbfpG2\
+xZEkhnSzdelX8iSPiD3QKgtngnAOXliLnOf6iKZYpWd6maDhWP1JIQ6hE6WtlUio\
+2otY5+8sYjLuSbUoUwIDAQAB\
+-----END PUBLIC KEY-----';

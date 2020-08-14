@@ -67,14 +67,14 @@
         data: function() {
             return {
                 param: {
-                    userName: 'admin',
-                    repassword: '123456',
-                    passWord: '123456',
-                    nikeName: '奔跑的小骚猪',
-                    name: '田舒利聪',
-                    mobile: '18814470102',
-                    idCard: '362329199701020359',
-                    email: '609417423@qq.com'
+                    userName: '',
+                    repassword: '',
+                    passWord: '',
+                    nikeName: '',
+                    name: '',
+                    mobile: '',
+                    idCard: '',
+                    email: ''
                 },
                 rules: {
                     userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -99,7 +99,7 @@
                             if (data.code == 1) {
                                 this.$message.success('注册成功');
                                 this.$store.dispatch('system/saveUser', data.result);
-                                this.$router.push('/index');
+                                this.$router.push('/login');
                             } else {
                                 this.$message.error('注册失败');
                             }

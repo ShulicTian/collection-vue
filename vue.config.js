@@ -16,6 +16,10 @@ module.exports = {
             '/collection': {
                 target: 'http://localhost:8082/collection',
                 pathRewrite: {'^/collection' : '/'}
+            },
+            '/jk160': {
+                target: 'https://weixin.91160.com/',
+                pathRewrite: {'^/jk160' : '/'}
             }
         }
     },

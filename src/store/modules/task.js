@@ -4,7 +4,10 @@ export default {
     namespaced: true,
     state: {
         taskList: [],
-        token: localStorage.getItem('token') || ''
+        token: localStorage.getItem('token') || '',
+        task: null,
+        userId: localStorage.getItem('userId') || '',
+        memberId: localStorage.getItem('memberId') || ''
     },
     mutations: {
         setTaskList(state, data) {
@@ -15,13 +18,12 @@ export default {
         },
         deleteTask(state, data) {
             state.taskList = state.taskList.filter(task => {
-                let flag = task.hospitalId != data.hospitalId && task.comminityId != data.comminityId && task.depId != data.depId;
                 if (data.taskType == '0') {
-                    return data.doctorId != task.doctorId && flag && data.workDate == task.workDate && data.timeUnit == task.timeUnit;
+                    return !(task.depId == data.depId && data.doctorId == task.doctorId && data.workDate == task.workDate && data.timeUnit == task.timeUnit);
                 } else if (data.taskType == '1') {
-                    return data.doctorId != task.doctorId && flag && data.workDate == task.workDate;
+                    return !(task.depId == data.depId && data.doctorId == task.doctorId && data.workDate == task.workDate);
                 } else if (data.taskType == '2') {
-                    return data.doctorId != task.doctorId && flag;
+                    return !(task.depId == data.depId && data.doctorId == task.doctorId);
                 }
                 return true;
             });
@@ -29,6 +31,15 @@ export default {
         setToken(state, data) {
             state.token = data;
             localStorage.setItem('token', data);
+        },
+        setTask(state, data) {
+            state.task = data;
+        },
+        setLoginInfo(state, data) {
+            state.memberId = data.memberId;
+            state.userId = data.userId;
+            localStorage.setItem('memberId', data.memberId);
+            localStorage.setItem('userId', data.userId);
         }
     },
     actions: {
@@ -42,7 +53,6 @@ export default {
         // 删除任务
         removeTask(state, data) {
             removeTask({ id: data.id }).then(res => {
-
             });
             state.commit('deleteTask', data);
         },
@@ -57,8 +67,17 @@ export default {
         taskList(state) {
             return state.taskList;
         },
-        token(state){
-            return state.token
+        token(state) {
+            return state.token;
+        },
+        getTask(state) {
+            return state.task;
+        },
+        getUserId(state) {
+            return state.userId;
+        },
+        getMemberId(state) {
+            return state.memberId;
         }
     }
 };

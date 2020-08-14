@@ -35,8 +35,8 @@
         data: function() {
             return {
                 param: {
-                    userName: 'admin',
-                    passWord: '123456'
+                    userName: '',
+                    passWord: ''
                 },
                 rules: {
                     userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],

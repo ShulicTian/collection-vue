@@ -75,6 +75,11 @@ export default {
                     icon: 'el-icon-lx-cascades',
                     index: 'config',
                     title: '基础配置'
+                },
+                {
+                    icon: 'el-icon-lx-cascades',
+                    index: 'interfaceTest',
+                    title: '接口测试'
                 }
             ]
         };

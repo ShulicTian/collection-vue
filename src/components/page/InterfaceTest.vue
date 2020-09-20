@@ -40,8 +40,9 @@
             requestUrl() {
                 this.resultData = {};
                 request({
-                    url: '/jk160' + this.sourceData,
-                    method: 'get'
+                    url: '/pms/f/sign/record/getSignTypeList',
+                    method: 'get',
+                    params:{mobile: '18814470102'}
                 }).then(res => {
                     this.resultData = res;
                     console.log(this.resultData);

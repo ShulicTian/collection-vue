@@ -44,6 +44,12 @@ export default new Router({
                     meta: { title: '接口测试', permission: true }
                 },
                 {
+                    // 接口测试
+                    path: '/hqIndex',
+                    component: () => import(/* webpackChunkName: "permission" */ '../components/page/hqIndex.vue'),
+                    meta: { title: '接口测试', permission: true }
+                },
+                {
                     path: '/404',
                     component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
                     meta: { title: '404' }

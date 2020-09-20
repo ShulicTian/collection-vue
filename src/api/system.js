@@ -3,7 +3,7 @@ import request from '../utils/request';
 //登录
 export const login = data => {
     return request({
-        url: '/collection/sys/login',
+        url: '/collection/sys/login?sys_cookie=true',
         method: 'post',
         data: data
     });

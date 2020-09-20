@@ -14,12 +14,16 @@ module.exports = {
                 pathRewrite: {'^/hoffice' : '/hoffice'}
             },
             '/collection': {
-                target: 'http://localhost:8082/collection',
+                target: 'http://localhost:8083/collection',
                 pathRewrite: {'^/collection' : '/'}
             },
             '/jk160': {
                 target: 'https://weixin.91160.com/',
                 pathRewrite: {'^/jk160' : '/'}
+            },
+            '/hqApi': {
+                target: 'https://ichoice.myweimai.com/',
+                pathRewrite: {'^/hqApi' : '/'}
             }
         }
     },

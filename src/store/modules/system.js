@@ -19,6 +19,9 @@ export default {
             state.dataHandleFlag = data;
         },
         cleanCache(state) {
+            localStorage.removeItem("token")
+            localStorage.removeItem("userId")
+            localStorage.removeItem("memberId")
         }
     },
     actions: {

@@ -62,6 +62,7 @@
             async handleCommand(command) {
                 if (command == 'loginout') {
                     await logout().then(res => {
+                        this.$store.commit("system/cleanCache")
                         this.$store.dispatch('system/saveUser', null);
                         this.$router.push('/login');
                     });

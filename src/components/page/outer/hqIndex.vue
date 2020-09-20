@@ -6,7 +6,7 @@
 <script>
     import {
         hqLogin
-    } from '../../api/index';
+    } from 'api/index';
     import { mapGetters } from 'vuex';
 
     export default {
@@ -32,7 +32,7 @@
         components: {},
         computed: {
             ...mapGetters({
-                getTaskList: 'task/taskList'
+                getTaskList: 'task/getTaskList'
             })
         },
         methods: {

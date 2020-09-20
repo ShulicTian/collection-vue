@@ -29,8 +29,8 @@
 </template>
 
 <script>
-    import { login } from '../../api/system';
-    import request from '../../utils/request';
+    import { login } from 'api/system';
+    import request from 'utils/request';
 
     export default {
         data: function() {
@@ -68,19 +68,9 @@
                         return false;
                     }
                 });
-            },
-            requestUrl() {
-                request({
-                    url: '/pms/f/sign/record/getSignTypeList',
-                    method: 'get',
-                    params:{mobile: '18814470102'}
-                }).then(res => {
-                    console.log(res);
-                });
             }
         },
         created(){
-            this.requestUrl()
         }
     };
 </script>
@@ -90,7 +80,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        background-image: url(../../assets/img/login-bg.jpg);
+        background-image: url(../../../assets/img/login-bg.jpg);
         background-size: 100%;
     }
 

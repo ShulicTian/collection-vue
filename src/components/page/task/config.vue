@@ -46,8 +46,8 @@
 
 <script>
     import { mapGetters } from 'vuex';
-    import { DataEncryption } from '../../utils/utils';
-    import { getVerCode, getVerificationImageCode, login, loginPage } from '../../api/index';
+    import { DataEncryption } from 'utils/utils';
+    import { getVerCode, getVerificationImageCode, login, loginPage } from 'api/index';
 
     export default {
         data: function() {

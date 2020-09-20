@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import request from '../../utils/request';
+    import request from 'utils/request';
     import VueJsonPretty from 'vue-json-pretty';
 
     export default {
@@ -40,7 +40,7 @@
             requestUrl() {
                 this.resultData = {};
                 request({
-                    url: '/pms/f/sign/record/getSignTypeList',
+                    url: this.sourceData,
                     method: 'get',
                     params:{mobile: '18814470102'}
                 }).then(res => {

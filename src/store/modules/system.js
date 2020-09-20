@@ -19,6 +19,8 @@ export default {
             state.dataHandleFlag = data;
         },
         cleanCache(state) {
+            state.token = null
+            state.user = null
             localStorage.removeItem("token")
             localStorage.removeItem("userId")
             localStorage.removeItem("memberId")

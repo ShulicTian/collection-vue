@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import { DataDecryption } from '../../utils/utils';
+    import { DataDecryption } from 'utils/utils';
 
     export default {
         name: 'index',

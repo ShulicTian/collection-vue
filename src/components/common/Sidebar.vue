@@ -63,8 +63,8 @@ export default {
                 },
                 {
                     icon: 'el-icon-lx-cascades',
-                    index: 'taskList',
-                    title: '任务列表'
+                    index: 'taskIndex',
+                    title: '任务管理'
                 },
                 {
                     icon: 'el-icon-lx-cascades',

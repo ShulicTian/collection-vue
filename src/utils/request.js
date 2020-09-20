@@ -14,7 +14,7 @@ service.interceptors.request.use(
     config => {
         config.headers.authToken = store.state.system.token;
         if (config.dataHandleFlag) {
-            config.headers.token = store.state.task.token;
+            config.headers.token = config.params.token;
             store.commit('system/setDataHandleFlag', config.dataHandleFlag);
         } else {
             store.commit('system/setDataHandleFlag', false);

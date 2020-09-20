@@ -3,11 +3,10 @@ import { addTask, getTaskList, removeTask } from '../../api/task';
 export default {
     namespaced: true,
     state: {
+        scheduleList: [],
+        scheduleSwitchList: [],
         taskList: [],
-        token: localStorage.getItem('token') || '',
-        task: null,
-        userId: localStorage.getItem('userId') || '',
-        memberId: localStorage.getItem('memberId') || ''
+        timeTaskList: null
     },
     mutations: {
         setTaskList(state, data) {
@@ -28,18 +27,17 @@ export default {
                 return true;
             });
         },
-        setToken(state, data) {
-            state.token = data;
-            localStorage.setItem('token', data);
+        setTimeTaskList(state, data) {
+            state.timeTaskList = data;
         },
-        setTask(state, data) {
-            state.task = data;
+        setScheduleList(state, data) {
+            state.scheduleList = data;
         },
-        setLoginInfo(state, data) {
-            state.memberId = data.memberId;
-            state.userId = data.userId;
-            localStorage.setItem('memberId', data.memberId);
-            localStorage.setItem('userId', data.userId);
+        pushScheduleSwitchList(state, data) {
+            state.scheduleSwitchList.push(data);
+        },
+        setScheduleSwitchList(state, data) {
+            state.scheduleSwitchList = data
         }
     },
     actions: {
@@ -57,27 +55,29 @@ export default {
             state.commit('deleteTask', data);
         },
         // 获取任务列表
-        requestTaskList(state, data) {
-            getTaskList({ userId: data }).then(res => {
-                state.commit('setTaskList', res.result);
-            });
+        async requestTaskList(state, data) {
+            let res = await getTaskList({ userId: data });
+            state.commit('setTaskList', res.result);
+            return res.result;
+        },
+        // 保存任务分配
+        saveSchedule(state, data) {
+            // let res = await getTaskList({ userId: data });
+            state.commit('setScheduleList', data);
         }
     },
     getters: {
-        taskList(state) {
+        getTaskList(state) {
             return state.taskList;
         },
-        token(state) {
-            return state.token;
+        getTimeTaskList(state) {
+            return state.timeTaskList;
         },
-        getTask(state) {
-            return state.task;
+        getScheduleList(state) {
+            return state.scheduleList;
         },
-        getUserId(state) {
-            return state.userId;
-        },
-        getMemberId(state) {
-            return state.memberId;
+        getScheduleSwitchList(state) {
+            return state.scheduleSwitchList;
         }
     }
 };

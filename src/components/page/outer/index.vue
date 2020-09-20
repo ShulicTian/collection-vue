@@ -78,7 +78,7 @@
                             <div v-for="obj2 in dataTimesList[finalParams.comminityId]"
                                  style="margin: 10px;padding:10px;border: 1px solid #d8d8d8;border-radius: 5px;">
                                 <div style="float: left;">
-                                    {{obj2.timeUnit}}（剩余{{obj2.timeNum-obj2.residueNum}}）
+                                    {{obj2.timeUnit}}（剩余{{obj2.residueNum}}）
                                 </div>
                                 <div style="float: right;padding-right: 10px;">
                                     <el-button type="primary" size="mini" @click.stop="addTask(obj2,'0')"
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-    import { DataDecryption, DataEncryption } from '../../utils/utils';
+    import { DataDecryption, DataEncryption } from 'utils/utils';
     import {
         getDepList,
         getDoctorList,
@@ -108,7 +108,7 @@
         getScheduleDateTimes,
         goSubmitSchedule,
         submitInfo
-    } from '../../api/index';
+    } from 'api/index';
     import { mapGetters } from 'vuex';
 
     export default {
@@ -170,7 +170,7 @@
         components: {},
         computed: {
             ...mapGetters({
-                getTaskList: 'task/taskList'
+                getTaskList: 'task/getTaskList'
             })
         },
         methods: {

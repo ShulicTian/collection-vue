@@ -1,4 +1,4 @@
-import { addTask, getTaskList, removeTask } from '../../api/task';
+import {addTask, getTaskList, removeTask, saveSchedule, getScheduleList, removeSchedule} from '../../api/task';
 
 export default {
     namespaced: true,
@@ -38,32 +38,53 @@ export default {
         },
         setScheduleSwitchList(state, data) {
             state.scheduleSwitchList = data
+        },
+        removeSchedule(state, data) {
+            state.scheduleList = state.scheduleList.filter(sche => sche.id != data.id);
         }
     },
     actions: {
         // 添加任务
         addTask(state, data) {
             addTask(data).then(res => {
-
+                state.commit('pushTask', data);
             });
-            state.commit('pushTask', data);
         },
         // 删除任务
         removeTask(state, data) {
-            removeTask({ id: data.id }).then(res => {
+            removeTask({id: data.id}).then(res => {
+                state.commit('deleteTask', data);
             });
-            state.commit('deleteTask', data);
         },
         // 获取任务列表
         async requestTaskList(state, data) {
-            let res = await getTaskList({ userId: data });
+            let res = await getTaskList({userId: data});
             state.commit('setTaskList', res.result);
             return res.result;
         },
         // 保存任务分配
         saveSchedule(state, data) {
-            // let res = await getTaskList({ userId: data });
-            state.commit('setScheduleList', data);
+            saveSchedule({
+                id: data.id,
+                name: data.name,
+                idCard: data.idCard,
+                mobile: data.mobile,
+                memberId: data.memberId,
+                token: data.token
+            }).then(ret => {
+            });
+        },
+        // 保存任务分配
+        async getScheduleList(state, data) {
+            let res = await getScheduleList({});
+            state.commit('setScheduleList', res.result);
+            return res.result;
+        },
+        // 删除任务分配
+        removeSchedule(state, data) {
+            removeSchedule(data).then(res => {
+                state.commit('removeSchedule', data);
+            });
         }
     },
     getters: {

@@ -24,3 +24,27 @@ export const removeTask = query => {
         params: query
     });
 };
+//保存任务分配
+export const saveSchedule = data => {
+    return request({
+        url: '/collection/schedule/saveSchedule',
+        method: 'POST',
+        data: data
+    });
+};
+//获取任务分配列表
+export const getScheduleList = query => {
+    return request({
+        url: '/collection/schedule/getScheduleList',
+        method: 'get',
+        params: query
+    });
+};
+//删除任务分配
+export const removeSchedule = query => {
+    return request({
+        url: '/collection/schedule/removeSchedule',
+        method: 'DELETE',
+        params: query
+    });
+};

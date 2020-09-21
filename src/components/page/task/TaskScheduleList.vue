@@ -1,12 +1,14 @@
 <template>
-  <div>
+  <div v-loading="loading"
+       element-loading-spinner="el-icon-loading"
+       element-loading-background="rgba(0, 0, 0, 0.8)">
     <el-header>
       <el-button type="primary" @click="dialogFormVisible = true">创建分配</el-button>
-      <el-button type="primary" @click="dialogFormVisible = true" v-if="!startAllFlag">开启所有任务</el-button>
-      <el-button type="danger" @click="dialogFormVisible = true" v-else>关闭所有任务</el-button>
+      <el-button type="primary" @click="startAll" v-if="!startAllFlag">开启所有任务</el-button>
+      <el-button type="danger" @click="closeAll" v-else>关闭所有任务</el-button>
     </el-header>
     <el-table
-        :data="scheduleList"
+        :data="getScheduleList"
         height="250"
         border
         style="width: 100%">
@@ -46,7 +48,7 @@
           label="操作">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="startTask(scope.row)"
-                     v-if="getScheduleSwitchList.indexOf(scope.row.idCard) != -1">开始任务
+                     v-if="getScheduleSwitchList.indexOf(scope.row.idCard) == -1">开始任务
           </el-button>
           <el-button size="mini" type="danger" @click="closeTask(scope.row)" v-else>停止任务</el-button>
           <el-button
@@ -87,7 +89,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="onCancel">取 消</el-button>
-        <el-button type="primary" @click="createSchedule">保 存</el-button>
+        <el-button type="primary" v-if="!codeFlag" @click="createSchedule">保 存</el-button>
+        <el-button type="primary" v-else @click="editSchedule">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -108,7 +111,6 @@ export default {
   name: 'TaskScheduleList',
   data: function () {
     return {
-      scheduleList: [],
       taskList: [],
       timeTaskList: [],
       dialogFormVisible: false,
@@ -124,7 +126,8 @@ export default {
       countTime: 10,
       text: '获取验证码',
       codeFlag: false,
-      startAllFlag: false
+      startAllFlag: false,
+      loading: false
     };
   },
   computed: {
@@ -163,10 +166,6 @@ export default {
           this.scheduleInfo.memberId = res.contentMap.memberId;
           this.scheduleInfo.userId = res.userId;
           console.log(this.scheduleInfo)
-          /*          this.$store.commit('task/setLoginInfo', {
-                      memberId: res.contentMap.memberId,
-                      userId: res.userId
-                    });*/
         }
       });
     },
@@ -221,22 +220,59 @@ export default {
       this.scheduleInfo.tasks = [];
     },
     createSchedule() {
+      this.loading = true;
       this.dialogFormVisible = false;
-      this.$store.dispatch('task/saveSchedule', this.scheduleInfo);
-      this.scheduleInfo = {};
-      this.scheduleInfo.tasks = [];
+      this.$store.dispatch('task/saveSchedule', this.scheduleInfo).then(res => {
+        this.loading = false;
+        this.$message({
+          message: '创建成功',
+          type: 'success'
+        });
+        this.scheduleInfo = {};
+        this.scheduleInfo.tasks = [];
+        this.requestScheduleList();
+      });
+    },
+    editSchedule() {
+      this.loading = true;
+      this.dialogFormVisible = false;
+      this.$store.dispatch('task/saveSchedule', this.scheduleInfo).then(res => {
+        this.loading = false;
+        this.$message({
+          message: '修改成功',
+          type: 'success'
+        });
+        this.codeFlag = false;
+        this.scheduleInfo = {};
+        this.scheduleInfo.tasks = [];
+        this.requestScheduleList();
+      });
     },
     scheduleDesc(index) {
-
+      this.scheduleInfo = this.getScheduleList[index]
+      this.codeFlag = true;
+      this.dialogFormVisible = true;
     },
     removeSchedule(index) {
-      this.$store.dispatch('task/removeTask', this.taskList[index]);
+      this.loading = true;
+      this.$store.dispatch('task/removeSchedule', {id: this.getScheduleList[index].id}).then(res => {
+        this.loading = false;
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+      });
     },
-    async requestTaskList() {
+    async requestScheduleList() {
+      this.loading = true;
       this.taskList = await this.$store.dispatch('task/requestTaskList', this.getUser.id);
+      await this.$store.dispatch('task/getScheduleList', {}).then(res => {
+        console.log(this.getScheduleList)
+        this.loading = false;
+      });
     },
     startTask(userInfo) {
-      _this.$store.commit('task/pushScheduleSwitchList', userInfo.idCard);
+      this.$store.commit('task/pushScheduleSwitchList', userInfo.idCard);
       let token = userInfo.token;
       let mobile = userInfo.mobile;
       let name = userInfo.name;
@@ -253,7 +289,7 @@ export default {
         ];
         let xykj = DataEncryption(params);
         getScheduleDate({xykj: xykj, token: token}).then(res => {
-          if (res.content && res.content.length > 0) {
+          if (res && res.content && res.content.length > 0) {
             for (let i = 0; i < res.content.length; i++) {
               obj.workDate = res.content[i].workDate;
               typeOne(obj);
@@ -273,11 +309,14 @@ export default {
           'workDate=' + obj.workDate
         ]);
         getScheduleDateTimes({xykj: xykj, token: token}).then(res => {
-          if (res.content && res.content[obj.comminityId].length > 0) {
+          if (res && res.content && res.content[obj.comminityId].length > 0) {
             let func = function () {
               typeZero(obj);
             };
             let taskList = [];
+            if (_this.getTimeTaskList && _this.getTimeTaskList.length > 0) {
+              taskList = _this.getTimeTaskList
+            }
             for (let i = 0; i < res.content[obj.comminityId].length; i++) {
               obj.feeId = res.content[obj.comminityId][i].feeId;
               obj.teamId = res.content[obj.comminityId][i].teamId;
@@ -285,16 +324,15 @@ export default {
               obj.endTime = res.content[obj.comminityId][i].endTime;
               obj.timeUnit = res.content[obj.comminityId][i].timeUnit;
               let task0 = setInterval(func, 1000);
-              if (_this.timeTaskList && _this.timeTaskList.length > 0) {
-                _this.timeTaskList.push(task0);
-              } else {
-                taskList.push(task0);
-              }
+              let taskObj = {}
+              taskObj.key = userInfo.id;
+              taskObj.val = task0;
+              taskList.push(taskObj);
             }
             if (taskList.length > 0) {
-              _this.timeTaskList = taskList;
+              _this.$store.commit('task/setTimeTaskList', taskList);
             }
-            _this.$store.commit('task/setTimeTaskList', _this.timeTaskList);
+
           } else {
             typeOne(obj);
           }
@@ -315,7 +353,7 @@ export default {
         ];
         let xykj = DataEncryption(params);
         goSubmitSchedule({xykj: xykj, token: token}).then(res => {
-          if (res.code == 1) {
+          if (res && res.code == 1) {
             obj.scheduleNo = res.content;
             submit(obj);
           }
@@ -368,7 +406,14 @@ export default {
         finalRequest({xykj: xykj, token: token}).then(res => {
           if (res.code == 1) {
             _this.closeTask(userInfo);
-            alert('预约成功');
+            _this.$message({
+              message: '预约成功',
+              type: 'success'
+            });
+            userInfo.status = 1;
+            _this.$store.dispatch('task/saveSchedule', userInfo).then(res => {
+              _this.requestScheduleList();
+            })
           }
         });
       };
@@ -383,9 +428,11 @@ export default {
               };
               let taskList = [];
               let task0 = setInterval(func, 1000);
-              taskList.push(task0);
-              this.timeTaskList = taskList;
-              this.$store.commit('task/setTimeTaskList', this.timeTaskList);
+              let taskObj = {};
+              taskObj.key = userInfo.id;
+              taskObj.val = task0;
+              taskList.push(taskObj);
+              this.$store.commit('task/setTimeTaskList', taskList);
             } else if (list[i].taskType == 1) {
               typeOne(list[i]);
             } else if (list[i].taskType == 2) {
@@ -404,22 +451,47 @@ export default {
       this.flag = true;
     },
     closeTask(userInfo) {
-      let list = this.getScheduleSwitchList;
-      list = list.filter(sche => sche != userInfo.idCard);
-      this.$store.commit('task/setScheduleSwitchList', list);
-      if (this.flag) {
-        this.flag = false;
-        this.$store.commit('task/setTimeTaskList', null);
-        for (let i = 0; i < this.timeTaskList.length; i++) {
-          clearInterval(this.timeTaskList[i]);
+      if (this.getScheduleSwitchList && this.getScheduleSwitchList.length > 0) {
+        let list = this.getScheduleSwitchList;
+        list = list.filter(sche => sche != userInfo.idCard);
+        this.$store.commit('task/setScheduleSwitchList', list);
+        if (list && list.length == 0) {
+          this.startAllFlag = false;
         }
       }
+      if (this.getTimeTaskList && this.getTimeTaskList.length > 0) {
+        let timeTask = this.getTimeTaskList.filter(timeTask => timeTask.key == userInfo.id)[0];
+        clearInterval(timeTask.val);
+        this.$store.commit('task/setTimeTaskList', this.getTimeTaskList.filter(timeTask => timeTask.key != userInfo.id));
+      }
+    },
+    startAll() {
+      this.loading = true;
+      if (this.getScheduleList && this.getScheduleList.length > 0) {
+        this.getScheduleList.forEach(sche => {
+          if (this.getScheduleSwitchList.indexOf(sche.idCard) == -1 && sche.status != 1) {
+            this.startTask(sche);
+          }
+        })
+      }
+      this.startAllFlag = true;
+      this.loading = false;
+    },
+    closeAll() {
+      this.loading = true;
+      if (this.getTimeTaskList && this.getTimeTaskList.length > 0) {
+        this.getTimeTaskList.forEach(timeTask => {
+          clearInterval(timeTask.val);
+        });
+      }
+      this.startAllFlag = false;
+      this.$store.commit('task/setScheduleSwitchList', []);
+      this.$store.commit('task/setTimeTaskList', []);
+      this.loading = false;
     }
   },
   created() {
-    this.requestTaskList();
-    this.timeTaskList = this.getTimeTaskList;
-    this.scheduleList = this.getScheduleList;
+    this.requestScheduleList();
   }
 };
 </script>

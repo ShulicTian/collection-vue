@@ -62,22 +62,17 @@ export default {
                     title: '系统首页'
                 },
                 {
-                    icon: 'el-icon-lx-cascades',
+                    icon: 'el-icon-tickets',
                     index: 'taskIndex',
                     title: '任务管理'
                 },
                 {
-                    icon: 'el-icon-lx-cascades',
+                    icon: 'el-icon-coin',
                     index: 'dataHandle',
                     title: '数据解码'
                 },
                 {
-                    icon: 'el-icon-lx-cascades',
-                    index: 'config',
-                    title: '基础配置'
-                },
-                {
-                    icon: 'el-icon-lx-cascades',
+                    icon: 'el-icon-link',
                     index: 'interfaceTest',
                     title: '接口测试'
                 }

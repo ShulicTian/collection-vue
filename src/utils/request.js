@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from '../store';
-import { DataDecryption } from '../utils/utils';
+import {DataDecryption} from '../utils/utils';
 import router from '../router';
 
 const service = axios.create({
@@ -22,7 +22,7 @@ service.interceptors.request.use(
         return config;
     },
     error => {
-        console.log('[request]'+error);
+        console.log('[request]' + error);
         return Promise.reject();
     }
 );
@@ -31,7 +31,13 @@ service.interceptors.response.use(
     response => {
         if (response.status === 200) {
             if (store.state.system.dataHandleFlag) {
-                return DataDecryption(response.data);
+                let res;
+                try {
+                    res = DataDecryption(response.data)
+                } catch (e) {
+                    console.log(e)
+                }
+                return res;
             }
             return response.data;
         } else if (response.status == 401) {

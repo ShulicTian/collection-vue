@@ -1,5 +1,8 @@
 <template>
   <el-table
+      v-loading="loading"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
       :data="getTaskList"
       height="250"
       border
@@ -68,7 +71,7 @@ export default {
       taskList: [],
       typeList: ['时间任务', '日期任务', '医生任务'],
       task: [],
-      flag: false
+      loading: false
     };
   },
   computed: {
@@ -82,10 +85,16 @@ export default {
       return this.typeList[cellValue];
     },
     removeTask(index) {
-      this.$store.dispatch('task/removeTask', this.getTaskList[index]);
+      this.loading = true;
+      this.$store.dispatch('task/removeTask', this.getTaskList[index]).then(res=>{
+        this.loading = false
+      });
     },
     requestTaskList() {
-      this.taskList = this.$store.dispatch('task/requestTaskList', this.getUser.id);
+      this.loading = true;
+      this.taskList = this.$store.dispatch('task/requestTaskList', this.getUser.id).then(res=>{
+        this.loading = false
+      });
     }
   },
   created() {

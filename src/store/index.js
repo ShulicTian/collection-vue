@@ -18,7 +18,7 @@ export default new Vuex.Store({
             // return getters['user/user']
         }
         // vuex 全局getters引入局部
-        // token () {
+        // token () {te
         //   return this.$store.getters['interview/token']
         // }
     },

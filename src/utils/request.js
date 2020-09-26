@@ -29,6 +29,9 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     response => {
+        console.log(response)
+        console.log(response.headers)
+        console.log(response.headers.token)
         if (response.status === 200) {
             if (store.state.system.dataHandleFlag) {
                 let res;

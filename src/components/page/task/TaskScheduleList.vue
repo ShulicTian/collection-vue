@@ -297,6 +297,8 @@ export default {
           } else {
             typeTwo(obj);
           }
+        }).catch(err => {
+          typeTwo(obj);
         });
       };
       let typeOne = function (obj) {
@@ -336,6 +338,8 @@ export default {
           } else {
             typeOne(obj);
           }
+        }).catch(err => {
+          typeOne(obj);
         });
       };
       let typeZero = function (obj) {
@@ -357,6 +361,8 @@ export default {
             obj.scheduleNo = res.content;
             submit(obj);
           }
+        }).catch(err=>{
+          typeZero(obj);
         });
       };
       let submit = function (obj) {
@@ -378,6 +384,8 @@ export default {
           if (res.code == 1) {
             finalDo(obj);
           }
+        }).catch(err=>{
+          submit(obj);
         });
       };
       let finalDo = function (obj) {
@@ -415,6 +423,8 @@ export default {
               _this.requestScheduleList();
             })
           }
+        }).catch( err => {
+          finalDo(obj);
         });
       };
 

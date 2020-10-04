@@ -24,11 +24,11 @@
       </el-table-column>
       <el-table-column
           prop="memberId"
-          label="MemberId">
+          label="MemberId" show-overflow-tooltip>
       </el-table-column>
       <el-table-column
           prop="token"
-          label="Token">
+          label="Token" show-overflow-tooltip>
       </el-table-column>
       <el-table-column
           prop="status"
@@ -115,12 +115,12 @@ export default {
       timeTaskList: [],
       dialogFormVisible: false,
       scheduleInfo: {
-        name: '田舒利聪',
-        idCard: '362329199701020359',
-        mobile: '18814470102',
+        name: '王小娇',
+        idCard: '533222200008081549',
+        mobile: '15361830419',
         code: '',
-        memberId: '',
-        token: ''
+        memberId: '1075887723785646524',
+        token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDEyODgxNDA2NDYsInBheWxvYWQiOiJ7XCJvcGVuSWRcIjpudWxsLFwidXNlcklkXCI6MTA3NTg4NzcyMzc4NTY0NjUyMyxcImxvZ2luRGF0ZVwiOjE2MDEyMDE3NDA2NDYsXCJsb2dpblR5cGVcIjpcIndlQ2hhdFwifSJ9.I1bGfbalOHASZHfGqFx114cj30pZNv0_UPw90vkWA9w'
       },
       labelWidth: '80px',
       countTime: 10,
@@ -165,7 +165,6 @@ export default {
         if (res && res.code == 1) {
           this.scheduleInfo.memberId = res.contentMap.memberId;
           this.scheduleInfo.userId = res.userId;
-          console.log(this.scheduleInfo)
         }
       });
     },
@@ -267,7 +266,6 @@ export default {
       this.loading = true;
       this.taskList = await this.$store.dispatch('task/requestTaskList', this.getUser.id);
       await this.$store.dispatch('task/getScheduleList', {}).then(res => {
-        console.log(this.getScheduleList)
         this.loading = false;
       });
     },
@@ -292,7 +290,8 @@ export default {
           if (res && res.content && res.content.length > 0) {
             for (let i = 0; i < res.content.length; i++) {
               obj.workDate = res.content[i].workDate;
-              typeOne(obj);
+              console.log(obj.workDate)
+              typeOne(obj, obj.workDate);
             }
           } else {
             typeTwo(obj);
@@ -301,45 +300,45 @@ export default {
           typeTwo(obj);
         });
       };
-      let typeOne = function (obj) {
+      let typeOne = function (obj, wd) {
         let xykj = DataEncryption([
           'producerType=' + '1',
           'producerId=' + obj.doctorId,
           'depId=' + obj.depId,
           'teamId=' + '',
           'orgId=' + obj.comminityId,
-          'workDate=' + obj.workDate
+          'workDate=' + wd
         ]);
         getScheduleDateTimes({xykj: xykj, token: token}).then(res => {
           if (res && res.content && res.content[obj.comminityId].length > 0) {
-            let func = function () {
-              typeZero(obj);
-            };
             let taskList = [];
             if (_this.getTimeTaskList && _this.getTimeTaskList.length > 0) {
               taskList = _this.getTimeTaskList
             }
-            for (let i = 0; i < res.content[obj.comminityId].length; i++) {
-              obj.feeId = res.content[obj.comminityId][i].feeId;
-              obj.teamId = res.content[obj.comminityId][i].teamId;
-              obj.startTime = res.content[obj.comminityId][i].startTime;
-              obj.endTime = res.content[obj.comminityId][i].endTime;
-              obj.timeUnit = res.content[obj.comminityId][i].timeUnit;
-              let task0 = setInterval(func, 1000);
-              let taskObj = {}
-              taskObj.key = userInfo.id;
-              taskObj.val = task0;
-              taskList.push(taskObj);
-            }
+            let task0 = setInterval(function () {
+              for (let i = 0; i < res.content[obj.comminityId].length; i++) {
+                obj.feeId = res.content[obj.comminityId][i].feeId;
+                obj.teamId = res.content[obj.comminityId][i].teamId;
+                obj.startTime = res.content[obj.comminityId][i].startTime;
+                obj.endTime = res.content[obj.comminityId][i].endTime;
+                obj.timeUnit = res.content[obj.comminityId][i].timeUnit;
+                typeZero(obj);
+              }
+              typeZero(obj);
+            }, 1000);
+            let taskObj = {}
+            taskObj.key = userInfo.id;
+            taskObj.val = task0;
+            taskList.push(taskObj);
             if (taskList.length > 0) {
               _this.$store.commit('task/setTimeTaskList', taskList);
             }
 
           } else {
-            typeOne(obj);
+            typeOne(obj, wd);
           }
         }).catch(err => {
-          typeOne(obj);
+          typeOne(obj, wd);
         });
       };
       let typeZero = function (obj) {
@@ -356,12 +355,13 @@ export default {
           'providerId=' + '0'
         ];
         let xykj = DataEncryption(params);
+        console.log(obj.workDate + ' ' + obj.timeUnit)
         goSubmitSchedule({xykj: xykj, token: token}).then(res => {
           if (res && res.code == 1) {
             obj.scheduleNo = res.content;
             submit(obj);
           }
-        }).catch(err=>{
+        }).catch(err => {
           typeZero(obj);
         });
       };
@@ -384,7 +384,7 @@ export default {
           if (res.code == 1) {
             finalDo(obj);
           }
-        }).catch(err=>{
+        }).catch(err => {
           submit(obj);
         });
       };
@@ -423,7 +423,7 @@ export default {
               _this.requestScheduleList();
             })
           }
-        }).catch( err => {
+        }).catch(err => {
           finalDo(obj);
         });
       };
@@ -431,20 +431,18 @@ export default {
       if (!this.flag) {
         for (let i = 0; i < list.length; i++) {
           try {
-            let func;
             if (list[i].taskType == 0) {
-              func = function () {
-                typeZero(list[i]);
-              };
               let taskList = [];
-              let task0 = setInterval(func, 1000);
+              let task0 = setInterval(function () {
+                typeZero(list[i]);
+              }, 1000);
               let taskObj = {};
               taskObj.key = userInfo.id;
               taskObj.val = task0;
               taskList.push(taskObj);
               this.$store.commit('task/setTimeTaskList', taskList);
             } else if (list[i].taskType == 1) {
-              typeOne(list[i]);
+              typeOne(list[i],list[i].workDate);
             } else if (list[i].taskType == 2) {
               typeTwo(list[i]);
             }
@@ -470,8 +468,11 @@ export default {
         }
       }
       if (this.getTimeTaskList && this.getTimeTaskList.length > 0) {
-        let timeTask = this.getTimeTaskList.filter(timeTask => timeTask.key == userInfo.id)[0];
-        clearInterval(timeTask.val);
+        let timeTask = this.getTimeTaskList.filter(timeTask => timeTask.key == userInfo.id);
+        timeTask.forEach(t => {
+          console.log(t)
+          clearInterval(t.val);
+        })
         this.$store.commit('task/setTimeTaskList', this.getTimeTaskList.filter(timeTask => timeTask.key != userInfo.id));
       }
     },

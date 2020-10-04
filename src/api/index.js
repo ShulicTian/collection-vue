@@ -19,8 +19,9 @@ export const getHospitalList = query => {
     return request({
         url: getHospitalInfoByCondition,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -28,8 +29,9 @@ export const getLowerCommunityList = query => {
     return request({
         url: getlowerCommunityInfoByOrgId,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -37,8 +39,9 @@ export const getDepList = query => {
     return request({
         url: getDepByOrgId,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -46,8 +49,9 @@ export const getDoctorList = query => {
     return request({
         url: getDoctorListByDepId,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -55,8 +59,9 @@ export const getScheduleDate = query => {
     return request({
         url: getScheduleDateurl,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -64,8 +69,9 @@ export const getScheduleDateTimes = query => {
     return request({
         url: getScheduleDateTimesNew,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -73,8 +79,9 @@ export const goSubmitSchedule = query => {
     return request({
         url: getScheduleNO,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -82,8 +89,9 @@ export const submitInfo = query => {
     return request({
         url: createBusinessInfo_selft,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -91,8 +99,9 @@ export const setScheduler = query => {
     return request({
         url: setSchedulerInfo,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 
@@ -100,8 +109,9 @@ export const finalRequest = query => {
     return request({
         url: createBusinessInfoNotPayment,
         method: 'get',
-        params: query,
-        dataHandleFlag: true
+        params: {xykj: query.xykj},
+        dataHandleFlag: true,
+        token: query.token
     });
 };
 

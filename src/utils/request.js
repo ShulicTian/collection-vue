@@ -14,7 +14,7 @@ service.interceptors.request.use(
     config => {
         config.headers.authToken = store.state.system.token;
         if (config.dataHandleFlag) {
-            config.headers.token = config.params.token;
+            config.headers.token = config.token;
             store.commit('system/setDataHandleFlag', config.dataHandleFlag);
         } else {
             store.commit('system/setDataHandleFlag', false);
@@ -29,10 +29,10 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
     response => {
-        console.log(response)
-        console.log(response.headers)
-        console.log(response.headers.token)
-        if (response.status === 200) {
+        // console.log(response)
+        // console.log(response.headers)
+        // console.log(response.headers.token)
+        if (response.status && response.status === 200) {
             if (store.state.system.dataHandleFlag) {
                 let res;
                 try {
@@ -43,7 +43,7 @@ service.interceptors.response.use(
                 return res;
             }
             return response.data;
-        } else if (response.status == 401) {
+        } else if (response.status && response.status == 401) {
             store.dispatch('system/saveUser', null);
             router.push('/login');
         } else {

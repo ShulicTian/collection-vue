@@ -39,12 +39,6 @@ export default new Router({
                 },
                 {
                     // 接口测试
-                    path: '/hqIndex',
-                    component: () => import(/* webpackChunkName: "permission" */ 'components/page/outer/hqIndex.vue'),
-                    meta: { title: '接口测试', permission: true }
-                },
-                {
-                    // 接口测试
                     path: '/taskIndex',
                     component: () => import(/* webpackChunkName: "permission" */ 'components/page/task/TaskIndex'),
                     meta: { title: '任务首页', permission: true }
@@ -64,6 +58,18 @@ export default new Router({
                     path: '/403',
                     component: () => import(/* webpackChunkName: "403" */ 'components/page/sys/403.vue'),
                     meta: { title: '403' }
+                },
+                {
+                    // 接口测试
+                    path: '/hqLogin',
+                    component: () => import(/* webpackChunkName: "permission" */ 'components/page/outer/hqLogin.vue'),
+                    meta: { title: '柯桥九价', permission: true }
+                },
+                {
+                    // 接口测试
+                    path: '/hqIndex',
+                    component: () => import(/* webpackChunkName: "permission" */ 'components/page/outer/hqIndex.vue'),
+                    meta: { title: '柯桥九价', permission: true }
                 }
             ]
         },
